@@ -9,7 +9,7 @@ from utils import *
 
 np.set_printoptions(precision = 4)
 
-base_data_folder = "./data/data"
+base_data_folder = "./data/default_data"
 csv_file = base_data_folder + "/driving_log.csv"
 
 samples = []
@@ -28,7 +28,7 @@ print("Number of validation samples : ", N_val)
 print("After augmentation number of training samples   : ", 2 * (3 * N_train))
 print("After augmentation number of validation samples : ", 2 * (3 * N_val))
 
-_BATCH_SIZE = 32
+_BATCH_SIZE = 48
 train_generator = generator(train_samples, _BATCH_SIZE, base_data_folder)
 validation_generator = generator(validation_samples, _BATCH_SIZE, base_data_folder)
 
@@ -54,18 +54,18 @@ if _LOAD_MODEL:
 else:
     _EPOCHS = 16
     model = get_model(_EPOCHS = _EPOCHS, μ = 0.0, σ = 5e-2,\
-                        λ = 5e-3, α = 3e-4, fc_drop_rate = 0.65)
+                        λ = 5e-3, α = 3e-4, fc_drop_rate = 0.60)
     callbacks = [
+        EarlyStopping(monitor = "val_loss", min_delta = 0.005,
+                      patience = 5, verbose = 1),
         # TensorBoard(log_dir = tb_logs_dir, batch_size = _BATCH_SIZE),
         TerminateOnNaN()
     ]
 
     historyObj = model.fit_generator(train_generator,
-                    steps_per_epoch =\
-                                ceil(2 * (3 * N_train) / _BATCH_SIZE),
+                    steps_per_epoch = ceil(2 * (3 * N_train) / _BATCH_SIZE),
                     validation_data = validation_generator,
-                    validation_steps =\
-                                ceil(2 * (3 * N_val) / _BATCH_SIZE),
+                    validation_steps = ceil(2 * (3 * N_val) / _BATCH_SIZE),
                     epochs = _EPOCHS, callbacks = callbacks,
                     shuffle = True, verbose = 1)
     history = historyObj.history
