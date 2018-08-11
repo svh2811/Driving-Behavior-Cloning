@@ -9,28 +9,39 @@ from utils import *
 
 np.set_printoptions(precision = 4)
 
-base_data_folder = "./data/default_data"
-csv_file = base_data_folder + "/driving_log.csv"
+data_set_folder = "./data/custom_data_track_1"
+img_folder = data_set_folder + "/IMG"
 
+csv_file = data_set_folder + "/driving_log.csv"
+additional_steer = 0.10
 samples = []
 with open(csv_file) as csvfile:
     reader = csv.reader(csvfile)
-    for i, line in enumerate(reader):
-        if i != 0:
-            samples.append(line)
+    for row_num, line in enumerate(reader):
+        if row_num == 0:
+            continue
+        for col_num in range(3):
+            center_angle = float(line[3])
+            image_file_path = img_folder + "/" + line[col_num].split("/")[-1]
+            if col_num == 1: # left camera image
+                center_angle += additional_steer
+            elif col_num == 2: # right camera image
+                center_angle -= additional_steer
+            samples.append([image_file_path, center_angle])
+
 print("Number of samples : ", len(samples))
 
-train_samples, validation_samples = train_test_split(samples, test_size = 0.3)
+train_samples, validation_samples = train_test_split(samples, test_size = 0.25)
 N_train = len(train_samples)
 N_val = len(validation_samples)
 print("Number of training samples   : ", N_train)
 print("Number of validation samples : ", N_val)
-print("After augmentation number of training samples   : ", 2 * (3 * N_train))
-print("After augmentation number of validation samples : ", 2 * (3 * N_val))
+print("After augmentation number of training samples   : ", 2 * N_train)
+print("After augmentation number of validation samples : ", 2 * N_val)
 
-_BATCH_SIZE = 48
-train_generator = generator(train_samples, _BATCH_SIZE, base_data_folder)
-validation_generator = generator(validation_samples, _BATCH_SIZE, base_data_folder)
+_BATCH_SIZE = 32
+train_generator = generator(train_samples, _BATCH_SIZE)
+validation_generator = generator(validation_samples, _BATCH_SIZE)
 
 model_base_dir = "./model"
 model_chkpt_file = model_base_dir + "/checkpoint/model_chkpt.h5"
@@ -52,20 +63,26 @@ if _LOAD_MODEL:
     print("Training history loaded from disk")
 
 else:
-    _EPOCHS = 16
+    _EPOCHS = 64
     model = get_model(_EPOCHS = _EPOCHS, μ = 0.0, σ = 5e-2,\
-                        λ = 5e-3, α = 3e-4, fc_drop_rate = 0.60)
+                        λ = 5e-3, α = 1e-2,\
+                        conv_drop_rate = 0.20, fc_drop_rate = 0.50)
     callbacks = [
-        EarlyStopping(monitor = "val_loss", min_delta = 0.005,
-                      patience = 5, verbose = 1),
+        ReduceLROnPlateau(monitor = "val_loss", factor = 0.1,
+                          patience = 4,
+                          verbose = 1,
+                          min_delta = 0.001,
+                          min_lr = 1e-8),
+        EarlyStopping(monitor = "val_loss", min_delta = 0.0001,
+                      patience = 20, verbose = 1),
         # TensorBoard(log_dir = tb_logs_dir, batch_size = _BATCH_SIZE),
         TerminateOnNaN()
     ]
 
     historyObj = model.fit_generator(train_generator,
-                    steps_per_epoch = ceil(2 * (3 * N_train) / _BATCH_SIZE),
+                    steps_per_epoch = ceil((2 * N_train) / _BATCH_SIZE),
                     validation_data = validation_generator,
-                    validation_steps = ceil(2 * (3 * N_val) / _BATCH_SIZE),
+                    validation_steps = ceil((2 * N_val) / _BATCH_SIZE),
                     epochs = _EPOCHS, callbacks = callbacks,
                     shuffle = True, verbose = 1)
     history = historyObj.history
