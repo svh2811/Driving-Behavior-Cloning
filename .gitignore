@@ -108,3 +108,6 @@ data/
 
 # output folder
 output/*.jpg
+
+# linux sim folder
+linux_sim/

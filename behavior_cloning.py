@@ -1,5 +1,4 @@
 import os
-import csv
 import pickle
 import numpy as np
 
@@ -9,25 +8,9 @@ from utils import *
 
 np.set_printoptions(precision = 4)
 
-data_set_folder = "./data/custom_data_track_1"
-img_folder = data_set_folder + "/IMG"
-
-csv_file = data_set_folder + "/driving_log.csv"
-additional_steer = 0.10
 samples = []
-with open(csv_file) as csvfile:
-    reader = csv.reader(csvfile)
-    for row_num, line in enumerate(reader):
-        if row_num == 0:
-            continue
-        for col_num in range(3):
-            center_angle = float(line[3])
-            image_file_path = img_folder + "/" + line[col_num].split("/")[-1]
-            if col_num == 1: # left camera image
-                center_angle += additional_steer
-            elif col_num == 2: # right camera image
-                center_angle -= additional_steer
-            samples.append([image_file_path, center_angle])
+add_samples(samples, "./data/custom_data_track_1", 0.10)
+add_samples(samples, "./data/custom_data_track_2", 0.10)
 
 print("Number of samples : ", len(samples))
 

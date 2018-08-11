@@ -1,4 +1,6 @@
 import cv2
+import csv
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -11,6 +13,22 @@ from keras.initializers import TruncatedNormal
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, TerminateOnNaN, TensorBoard, ReduceLROnPlateau, LearningRateScheduler
 
+
+def add_samples(samples, data_set_folder, additional_steer):
+    with open(data_set_folder + "/driving_log.csv") as csvfile:
+        reader = csv.reader(csvfile)
+        for row_num, line in enumerate(reader):
+            if row_num == 0:
+                continue
+            for col_num in range(3):
+                center_angle = float(line[3])
+                image_file_path = data_set_folder + "/IMG/"\
+                                    + line[col_num].split("/")[-1]
+                if col_num == 1: # left camera image
+                    center_angle += additional_steer
+                elif col_num == 2: # right camera image
+                    center_angle -= additional_steer
+                samples.append([image_file_path, center_angle])
 
 def bgrToRgb(bgrImage):
     return cv2.cvtColor(bgrImage, cv2.COLOR_BGR2RGB)
