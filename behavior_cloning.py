@@ -2,15 +2,23 @@ import os
 import pickle
 import numpy as np
 
+from keras.callbacks import EarlyStopping, TerminateOnNaN, TensorBoard, ReduceLROnPlateau
 from keras.models import load_model
+from sklearn.model_selection import train_test_split
 from math import ceil
 from utils import *
 
 np.set_printoptions(precision = 4)
 
 samples = []
-add_samples(samples, "./data/custom_data_track_1", 0.10)
-add_samples(samples, "./data/custom_data_track_2", 0.10)
+
+add_samples(samples, "./data/custom_data_track_1", 0.100)
+# this sample was collected by driving under 15mph
+# while staying in center of lane
+add_samples(samples, "./data/custom_data_track_2_1", 0.100)
+# this sample was collected by driving as fast as possible
+# while staying in center of lane (as far as possible)
+add_samples(samples, "./data/custom_data_track_2_2", 0.175)
 
 print("Number of samples : ", len(samples))
 
@@ -28,6 +36,7 @@ validation_generator = generator(validation_samples, _BATCH_SIZE)
 
 model_base_dir = "./model"
 model_chkpt_file = model_base_dir + "/checkpoint/model_chkpt.h5"
+model_weights_file = model_base_dir + "/weights/model_weights.h5"
 tb_logs_dir = model_base_dir + "/tb-logs"
 train_hist_file = model_base_dir + "/training-history/train_history_dict.p"
 
@@ -46,19 +55,19 @@ if _LOAD_MODEL:
     print("Training history loaded from disk")
 
 else:
-    _EPOCHS = 64
+    _EPOCHS = 30
     model = get_model(_EPOCHS = _EPOCHS, μ = 0.0, σ = 5e-2,\
-                        λ = 5e-3, α = 1e-2,\
-                        conv_drop_rate = 0.20, fc_drop_rate = 0.50)
+                        λ = 5e-4, α = 3e-3,\
+                        conv_drop_rate = 0.15, fc_drop_rate = 0.65)
     callbacks = [
         ReduceLROnPlateau(monitor = "val_loss", factor = 0.1,
-                          patience = 4,
+                          patience = 3,
                           verbose = 1,
-                          min_delta = 0.001,
+                          min_delta = 0.0050,
                           min_lr = 1e-8),
-        EarlyStopping(monitor = "val_loss", min_delta = 0.0001,
-                      patience = 20, verbose = 1),
-        # TensorBoard(log_dir = tb_logs_dir, batch_size = _BATCH_SIZE),
+        EarlyStopping(monitor = "val_loss", min_delta = 0.0050,
+                      patience = 9, verbose = 1),
+        TensorBoard(log_dir = tb_logs_dir, batch_size = _BATCH_SIZE),
         TerminateOnNaN()
     ]
 
@@ -78,9 +87,12 @@ else:
     model.save(model_chkpt_file)
     print("Model saved to disk")
 
+    model.save_weights(model_weights_file)
+    print("Model weights saved to disk")
+
     with open(train_hist_file, 'wb') as f:
         pickle.dump(history, f)
-    print("Training history saved")
+    print("Training history saved to disk")
 
 print("\n\n")
 
