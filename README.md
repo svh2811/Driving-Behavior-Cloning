@@ -25,8 +25,6 @@ driving-simulator-files would be downloaded if download_resources.sh script is r
   drive.py is waiting for simulation to start, select a track and click automonous mode. Now, one should see the car moving forward.
 4. `python3 video.py ./output` this commands converts stored video frames to a video file
 
-### Model Architecture and Training Strategy
-
 #### Model Architecture
 The following table summaries the stacked layers used to build behanvior-cloning-network
 file utils.py method get_model(...)
@@ -73,30 +71,34 @@ file utils.py method get_model(...)
 
 ![tensorboard visualization of best performing model](/images/model.png)
 
+#### Creation of the Training Set & Training Process
+1. Three sets of datasets were created:
+ * Track-1
+   * One lap of recorded driving data in both clockwise and counter-clockwise direction. 12882 images were recorded (includes images from center, left and right camera).
+ * Track-2
+   * One lap of recorded data in both clockwise and counter-clockwise direction while ensuring the car is almost in the center of the lane this was achieved by driving under 12mph. 24009 images were recorded (includes images from center, left and right camera).
+   * Two lap of recorded data in both clockwise and counter-clockwise direction while driving as fast as possible and ensuring the car never goes offtrack. This approach included a number of situations were the car had to recover from almost going offtrack. 44550 images were recorded (includes images from center, left and right camera).
+   * 81432 images were recorded in total
+2. The above three datsets were stored in three distinct directories so that experiements could be done using specific datasets
+3. Analog joystick was used to record a more accurate reading of steering angles
+4. Later the the union of three aforementioned datasets were split into training dataset and validation dataset where train-test split ratio was 75-25.
+
+#### Training methodology
+* The network was trained for a maximum of 30 epochs with and initial learning rate if 3e-3. Four callbacks were added to the model:
+ 1. Reduce learning rate if validation loss plateaus. plateau is defined as max decrease of validation loss by 0.005 for 3 epochs.
+ 2. Terminate the learning process if NaN was encountered
+ 3. Early stop learning process if validation loss does not decrease even by 0.005 after 9 epochs.
+ 4. Record tensorboard logs for network visualization.
+* A custom generator was used to create training and validation batches on the fly.
+
 #### Avoiding overfitting
 To avoid overfitting training data was augmented by flipping every image in the dataset, batch-normalize convolution layer followed by dropout. Also, first fully-connected layer was regularized using dropuout layer and the subsequent fully connected layer was regularized using l2-regularizer.   
 
 #### Parameter tuning
-To train the network a batch-size of 32 samples was used with convolution dropout rate 0.15, fully connected layer dropout rate 0.65, l2-regularization-constant 5e-4 and initial learning rate of 3e-3.
-
-#### Training methodology
-The network was trained for a maximum of 30 epochs with and initial learning rate if 3e-3. Four callbacks were added to the model:
-1. Reduce learning rate if validation loss plateaus. plateau is defined as max decrease of validation loss by 0.005 for 3 epochs.
-2. Terminate the learning process if NaN was encountered
-3. Early stop learning process if validation loss does not decrease even by 0.005 after 9 epochs.
-4. Record tensorboard logs for network visualization.
-
-#### Creation of the Training Set & Training Process
-11111111111111111
+To train the network a batch-size of 32 samples was used with convolution dropout rate 0.15, fully connected layer dropout rate 0.65, l2-regularization-constant 5e-4 and initial learning rate of 3e-3 with Adam optimizer.
 
 #### Architecture experimentation
 111111111111111
-
-#### Training data collection
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
-
 
 ### Simulation
 
