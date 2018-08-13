@@ -75,17 +75,20 @@ Non-trainable params: 672
 ![alt text][image1]
 
 #### Avoiding overfitting
-11111111111
+To avoid overfitting training data was augmented by flipping every image in the dataset, batch-normalize convolution layer followed by dropout. Also, first fully-connected layer was regularized using dropuout layer and the subsequent fully connected layer was regularized using l2-regularizer.   
 
 #### Parameter tuning
+To train the network a batch-size of 32 samples was used with convolution dropout rate 0.15, fully connected layer dropout rate 0.65, l2-regularization-constant 5e-4 and initial learning rate of 3e-3.
 
 #### Training methodology
-11111111111111
+The network was trained for a maximum of 30 epochs with and initial learning rate if 3e-3. Four callbacks were added to the model:
+1. Reduce learning rate if validation loss plateaus. plateau is defined as max decrease of validation loss by 0.005 for 3 epochs.
+2. Terminate the learning process if NaN was encountered
+3. Early stop learning process if validation loss does not decrease even by 0.005 after 9 epochs.
+4. Record tensorboard logs for network visualization.
 
 #### Creation of the Training Set & Training Process
 11111111111111111
-
-### Architecture and Training Documentation
 
 #### Architecture experimentation
 111111111111111
