@@ -97,8 +97,11 @@ To avoid overfitting training data was augmented by flipping every image in the 
 #### Parameter tuning
 To train the network a batch-size of 32 samples was used with convolution dropout rate 0.15, fully connected layer dropout rate 0.65, l2-regularization-constant 5e-4 and initial learning rate of 3e-3 with Adam optimizer.
 
-#### Architecture experimentation
-111111111111111
+#### Experiments
+* First experiment was using LeNet model and default-training-dataset, the model frequently used to get off-track and the car never drove past the bridge over lake.
+* To improve the performance, a higher capacity network was used (this network had 4M trainable parameters which is significantly higher than the final selected model), this model drove well for most of track except for the below two tricky turns.
+* Instead of altering model architecture, custom dataset was collected as mentioned in point 1.1 (of Creation of the Training Set & Training Process). The model drove around the track ideally with smooth turns around the above mentioned two difficult tracks, even at top speed of 30 mph. However, for track-2 the model could not get past the first turn.
+* Next, additional track-2 related data were added as mentioned in point 1.2 (of Creation of the Training Set & Training Process)
 
 ### Simulation
 
