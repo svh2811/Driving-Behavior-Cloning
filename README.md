@@ -1,6 +1,8 @@
 # Driving-Behavior-Cloning
 Neural Network that mimics the driving behavior
 
+![simulation](/images/sim-image.png)
+
 ### The goals/steps of this project are the following:
 * Use the driving simulator to collect data of good driving behavior
 * Build, a convolution neural network in Keras that predicts steering angles from images
@@ -17,13 +19,23 @@ Neural Network that mimics the driving behavior
 ### Driving the car autonomously 
 driving-simulator-files, `drive.py` script and the saved model file is required to run the car autonomously in the simulator 
 driving-simulator-files would be downloaded if download_resources.sh script is run.
-1. `./linux_sim/linux_sim.x86_64`
- run this command to start the simulator, then select default options (as training data was recorded using the default settings)
-2. `python3 drive.py -s=17 -vfd=./output`
-  this command start a server that continuously posts steering angle information to the simulator, also './output' is the directory where the video frame is stored.
-3. `start simulation`
-  drive.py is waiting for the simulation to start, select a track and click autonomous mode. Now, one should see the car moving forward.
-4. `python3 video.py ./output` this commands converts stored video frames to a video file.
+```sh
+./linux_sim/linux_sim.x86_64
+```
+run this command to start the simulator, then select default options (as training data was recorded using the default settings)
+
+```sh
+python3 drive.py -s=17 -vfd=./output
+```
+this command start a server that continuously posts steering angle information to the simulator, also './output' is the directory where the video frame is stored.
+
+start simulation, drive.py is waiting for the simulation to start, select a track and click autonomous mode. Now, one should see the car moving forward.
+
+
+```sh
+python3 video.py ./output
+```
+this commands converts stored video frames to a video file.
 
 ### Model Architecture
 The following table summaries the stacked layers used to build behavior-cloning-network
@@ -100,6 +112,12 @@ To train the network a batch-size of 32 samples was used with convolution dropou
 ### Experiments
 * The first experiment was using LeNet model and default-training-dataset, the model frequently used to get off-track and the car never drove past the bridge over the lake.
 * To improve the performance, a higher capacity network was used (this network had 4M trainable parameters which is significantly higher than the final selected model), this model drove well for most of the track except for the below two tricky turns.
+
+<div>
+  <img src="images/sand-lane-left-turn.png" width="240"/>
+  <img src="images/lake-right-turn.png" width="240"/>
+</div>
+
 * Instead of altering model architecture, a custom dataset was collected as mentioned in point 1.1 (of Creation of the Training Set & Training Process). The model drove around the track ideally with smooth turns around the above mentioned two difficult tracks, even at the top speed of 30 mph. However, for track-2 the model could not get past the first turn.
 * Next, additional track-2 related data were added as mentioned in point 1.2 (of Creation of the Training Set & Training Process) the model trained drove properly around track-1, however, the model used to drive off-track frequently for track-02. This was perplexing since the mean squared error loss for both training and validation dataset were lower than the previous iteration.
 * To mitigate this issue a comparatively lower capacity model (one mentioned in this report above) was selected. The performance of this model was good for both tracks even though the validation loss and training loss were higher.
