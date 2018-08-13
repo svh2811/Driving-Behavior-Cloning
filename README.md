@@ -1,20 +1,20 @@
 # Driving-Behavior-Cloning
 Neural Network that mimics the driving behavior
 
-#### The goals / steps of this project are the following:
+### The goals/steps of this project are the following:
 * Use the driving simulator to collect data of good driving behavior
 * Build, a convolution neural network in Keras that predicts steering angles from images
 * Train and validate the model with a training and validation set
 * Test that the model successfully drives around multiple track without leaving the road
 
-#### This project includes the following files:
+### This project includes the following files:
 * behavior_cloning.py containing the script to train the model and use model for inference (if required)
 * utils.py containing supplmentary python functions
 * download_resources.sh shell file to download driving-simulator and default-training-dataset
 * drive.py for driving the car in autonomous mode
 * model.h5 containing a trained convolution neural network
 
-#### Driving the car autonomously 
+### Driving the car autonomously 
 driving-simulator-files, `drive.py` script and saved model file is required to run the car autonomously in the simulator 
 driving-simulator-files would be downloaded if download_resources.sh script is ran.
 1. `./linux_sim/linux_sim.x86_64`
@@ -25,7 +25,7 @@ driving-simulator-files would be downloaded if download_resources.sh script is r
   drive.py is waiting for simulation to start, select a track and click automonous mode. Now, one should see the car moving forward.
 4. `python3 video.py ./output` this commands converts stored video frames to a video file
 
-#### Model Architecture
+### Model Architecture
 The following table summaries the stacked layers used to build behanvior-cloning-network
 file utils.py method get_model(...)
 
@@ -71,7 +71,7 @@ file utils.py method get_model(...)
 
 ![tensorboard visualization of best performing model](/images/model.png)
 
-#### Creation of the Training Set & Training Process
+### Creation of the Training Set & Training Process
 1. Three sets of datasets were created:
  * Track-1
    * One lap of recorded driving data in both clockwise and counter-clockwise direction. 12882 images were recorded (includes images from center, left and right camera).
@@ -97,7 +97,7 @@ To avoid overfitting training data was augmented by flipping every image in the 
 #### Parameter tuning
 To train the network a batch-size of 32 samples was used with convolution dropout rate 0.15, fully connected layer dropout rate 0.65, l2-regularization-constant 5e-4 and initial learning rate of 3e-3 with Adam optimizer.
 
-#### Experiments
+### Experiments
 * First experiment was using LeNet model and default-training-dataset, the model frequently used to get off-track and the car never drove past the bridge over lake.
 * To improve the performance, a higher capacity network was used (this network had 4M trainable parameters which is significantly higher than the final selected model), this model drove well for most of track except for the below two tricky turns.
 * Instead of altering model architecture, custom dataset was collected as mentioned in point 1.1 (of Creation of the Training Set & Training Process). The model drove around the track ideally with smooth turns around the above mentioned two difficult tracks, even at top speed of 30 mph. However, for track-2 the model could not get past the first turn.
@@ -108,10 +108,32 @@ To train the network a batch-size of 32 samples was used with convolution dropou
  * Since the model drives around track-02 completly autonoumsly till speed 25, a better quality training dataset would further improve the performance of the model for track-02.
 * Finally, the same model was used to drive around mountain track (present in older iteration of simulator). 
 
-#### Plots
+### Plots
 
 ![train loss v/s. validation loss](/plots/train_loss-vs-val_loss.png)
 
 ### Simulation Results
 
+#### Track 01 - Speed 17
 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=jCTxx-YGvyA" target="_blank">
+  <img src="http://img.youtube.com/vi/jCTxx-YGvyA/0.jpg" alt="Track 01 - Speed 17" width="480" border="10" />
+</a>
+
+#### Track 02 - Speed 17
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=tyBBI21rO08" target="_blank">
+  <img src="http://img.youtube.com/vi/tyBBI21rO08/0.jpg" alt="Track 01 - Speed 17" width="480" border="10" />
+</a>
+
+#### Mountain track - Speed 17
+frames from this track were not used during training process
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=OZRx8RWHKHg" target="_blank">
+  <img src="http://img.youtube.com/vi/OZRx8RWHKHg/0.jpg" alt="Track 01 - Speed 17" width="480" border="10" />
+</a>
+
+### Future work
+
+* Instead if mimicing the driving behaviour of the dataset curator, once can manually created a very small dataset with perfect steer angles at positions in the track. For this approach since the dataset size would be small network would have to be regularized robustly to prevent overfitting.
+* End to end training for behaviour cloning is presumably a weak approach, since the behaviour learned do not seem to be easily tranferable as seen from mountain track. Reinforcement learning might be a better suited to tackle this problem.
