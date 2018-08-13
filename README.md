@@ -71,7 +71,7 @@ file utils.py method get_model(...)
 
 *Non-trainable params: 672*
 
-![tensorboard visualization of best performing model][./images/model.png]
+![tensorboard visualization of best performing model][https://github.com/svh2811/Driving-Behavior-Cloning/blob/master/images/model.png]
 
 #### Avoiding overfitting
 To avoid overfitting training data was augmented by flipping every image in the dataset, batch-normalize convolution layer followed by dropout. Also, first fully-connected layer was regularized using dropuout layer and the subsequent fully connected layer was regularized using l2-regularizer.   
