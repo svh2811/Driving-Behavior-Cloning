@@ -5,28 +5,28 @@ Neural Network that mimics the driving behavior
 * Use the driving simulator to collect data of good driving behavior
 * Build, a convolution neural network in Keras that predicts steering angles from images
 * Train and validate the model with a training and validation set
-* Test that the model successfully drives around multiple track without leaving the road
+* Test that the model successfully drives around multiple tracks without leaving the road
 
 ### This project includes the following files:
 * behavior_cloning.py containing the script to train the model and use model for inference (if required)
-* utils.py containing supplmentary python functions
+* utils.py containing supplementary python functions
 * download_resources.sh shell file to download driving-simulator and default-training-dataset
 * drive.py for driving the car in autonomous mode
 * model.h5 containing a trained convolution neural network
 
 ### Driving the car autonomously 
-driving-simulator-files, `drive.py` script and saved model file is required to run the car autonomously in the simulator 
-driving-simulator-files would be downloaded if download_resources.sh script is ran.
+driving-simulator-files, `drive.py` script and the saved model file is required to run the car autonomously in the simulator 
+driving-simulator-files would be downloaded if download_resources.sh script is run.
 1. `./linux_sim/linux_sim.x86_64`
  run this command to start the simulator, then select default options (as training data was recorded using the default settings)
 2. `python3 drive.py -s=17 -vfd=./output`
-  this command start a server that continously posts steering angle information to the simulator, also './output' is the directory where video frame are stored.
+  this command start a server that continuously posts steering angle information to the simulator, also './output' is the directory where the video frame is stored.
 3. `start simulation`
-  drive.py is waiting for simulation to start, select a track and click automonous mode. Now, one should see the car moving forward.
-4. `python3 video.py ./output` this commands converts stored video frames to a video file
+  drive.py is waiting for the simulation to start, select a track and click autonomous mode. Now, one should see the car moving forward.
+4. `python3 video.py ./output` this commands converts stored video frames to a video file.
 
 ### Model Architecture
-The following table summaries the stacked layers used to build behanvior-cloning-network
+The following table summaries the stacked layers used to build behavior-cloning-network
 file utils.py method get_model(...)
 
 | Layer              | Input  | Output | Params |
@@ -74,39 +74,39 @@ file utils.py method get_model(...)
 ### Creation of the Training Set & Training Process
 1. Three sets of datasets were created:
  * Track-1
-   * One lap of recorded driving data in both clockwise and counter-clockwise direction. 12882 images were recorded (includes images from center, left and right camera).
+   * One lap of recorded driving data in both clockwise and counter-clockwise direction. 12882 images were recorded (includes images from the center, left and right camera).
  * Track-2
-   * One lap of recorded data in both clockwise and counter-clockwise direction while ensuring the car is almost in the center of the lane this was achieved by driving under 12mph. 24009 images were recorded (includes images from center, left and right camera).
-   * Two lap of recorded data in both clockwise and counter-clockwise direction while driving as fast as possible and ensuring the car never goes offtrack. This approach included a number of situations were the car had to recover from almost going offtrack. 44550 images were recorded (includes images from center, left and right camera).
+   * One lap of recorded data in both clockwise and counter-clockwise direction while ensuring the car is almost in the center of the lane this was achieved by driving under 12mph. 24009 images were recorded (includes images from the center, left and right camera).
+   * Two laps of recorded data in both clockwise and counter-clockwise direction while driving as fast as possible and ensuring the car never goes off track. This approach included a number of situations where the car had to recover from almost going off track. 44550 images were recorded (includes images from the center, left and right camera).
    * 81432 images were recorded in total
-2. The above three datsets were stored in three distinct directories so that experiements could be done using specific datasets
+2. The above three datasets were stored in three distinct directories so that experiments could be done using specific datasets
 3. Analog joystick was used to record a more accurate reading of steering angles
-4. Later the the union of three aforementioned datasets were split into training dataset and validation dataset where train-test split ratio was 75-25.
+4. Later the union of the three aforementioned datasets was split into the training dataset and validation dataset where the train-test split ratio was 75-25.
 
 #### Training methodology
-* The network was trained for a maximum of 30 epochs with and initial learning rate if 3e-3. Four callbacks were added to the model:
- 1. Reduce learning rate if validation loss plateaus. plateau is defined as max decrease of validation loss by 0.005 for 3 epochs.
+* The network was trained for a maximum of 30 epochs with an initial learning rate if 3e-3. Four callbacks were added to the model:
+ 1. Reduce learning rate if validation loss plateaus. A plateau here is defined as a max decrease of validation loss by 0.005 for 3 epochs.
  2. Terminate the learning process if NaN was encountered
  3. Early stop learning process if validation loss does not decrease even by 0.005 after 9 epochs.
  4. Record tensorboard logs for network visualization.
 * A custom generator was used to create training and validation batches on the fly.
 
 #### Avoiding overfitting
-To avoid overfitting training data was augmented by flipping every image in the dataset, batch-normalize convolution layer followed by dropout. Also, first fully-connected layer was regularized using dropuout layer and the subsequent fully connected layer was regularized using l2-regularizer.   
+To avoid overfitting training data was augmented by flipping every image in the dataset, batch-normalize convolution layer followed by dropout. Also, the first fully-connected layer was regularized using dropout layer and the subsequent fully connected layer was regularized using l2-regularizer.   
 
 #### Parameter tuning
-To train the network a batch-size of 32 samples was used with convolution dropout rate 0.15, fully connected layer dropout rate 0.65, l2-regularization-constant 5e-4 and initial learning rate of 3e-3 with Adam optimizer.
+To train the network a batch-size of 32 samples was used with convolution dropout rate of 0.15, fully connected layer dropout rate of 0.65, l2-regularization-constant 5e-4 and initial learning rate of 3e-3 with Adam optimizer.
 
 ### Experiments
-* First experiment was using LeNet model and default-training-dataset, the model frequently used to get off-track and the car never drove past the bridge over lake.
-* To improve the performance, a higher capacity network was used (this network had 4M trainable parameters which is significantly higher than the final selected model), this model drove well for most of track except for the below two tricky turns.
-* Instead of altering model architecture, custom dataset was collected as mentioned in point 1.1 (of Creation of the Training Set & Training Process). The model drove around the track ideally with smooth turns around the above mentioned two difficult tracks, even at top speed of 30 mph. However, for track-2 the model could not get past the first turn.
-* Next, additional track-2 related data were added as mentioned in point 1.2 (of Creation of the Training Set & Training Process) the model trained drove properly around track-1 however the model used to drive off-track frequently for track-02. This was perplexing since the mean squared error loss for both training and validation dataset were lower than the previous iteration.
-* To mitigate this issue a compartively lower capacity model (one mentioned in this report above) was selected. The performance of this model was good for both tracks even though the validation loss and training loss were higher.
- * Even at top-speed 30mph the model drove the car the around track-01 adequately. Although the deeper model that was previously selected drove the car perfectly at top speed. But this can be explained since the previous model was trained exclusively with track-01 data and the current model was trained with dataset with only 15% track-01 image frames. Hence the behaviour learned has influence from track-02 frames.  
- * At top speed 30, the model required manual interventions at certain turns to complete the track althought it was able to drive extremely challenging streches of track successfully at top speed. Even collecting data (while maintaining top speed) was arduous and at several sharp turn brakes were applied to prevent the car from going offtrack.
- * Since the model drives around track-02 completly autonoumsly till speed 25, a better quality training dataset would further improve the performance of the model for track-02.
-* Finally, the same model was used to drive around mountain track (present in older iteration of simulator). 
+* The first experiment was using LeNet model and default-training-dataset, the model frequently used to get off-track and the car never drove past the bridge over the lake.
+* To improve the performance, a higher capacity network was used (this network had 4M trainable parameters which is significantly higher than the final selected model), this model drove well for most of the track except for the below two tricky turns.
+* Instead of altering model architecture, a custom dataset was collected as mentioned in point 1.1 (of Creation of the Training Set & Training Process). The model drove around the track ideally with smooth turns around the above mentioned two difficult tracks, even at the top speed of 30 mph. However, for track-2 the model could not get past the first turn.
+* Next, additional track-2 related data were added as mentioned in point 1.2 (of Creation of the Training Set & Training Process) the model trained drove properly around track-1, however, the model used to drive off-track frequently for track-02. This was perplexing since the mean squared error loss for both training and validation dataset were lower than the previous iteration.
+* To mitigate this issue a comparatively lower capacity model (one mentioned in this report above) was selected. The performance of this model was good for both tracks even though the validation loss and training loss were higher.
+ * Even at top-speed 30mph the model drove the car the around track-01 adequately. Although the deeper model that was previously selected drove the car perfectly at top speed. But this can be explained since the previous model was trained exclusively with track-01 data and the current model was trained with a dataset with only 15% track-01 image frames. Hence the driving behavior learned has significant influence from track-02 frames.  
+ * At top speed 30, the model required manual interventions at certain turns to complete the track although it was able to drive extremely challenging stretches of track successfully at top speed. Even collecting data (while maintaining top speed) was arduous and at several sharp turns, brakes were applied to prevent the car from going off track.
+ * Since the model drives around track-02 completely autonomously till speed 25, a better quality training dataset would further improve the performance of the model for track-02.
+* Finally, the same model was used to drive around mountain track (present in an older iteration of the simulator). 
 
 ### Plots
 
@@ -135,5 +135,5 @@ frames from this track were not used during training process
 
 ### Future work
 
-* Instead if mimicing the driving behaviour of the dataset curator, once can manually created a very small dataset with perfect steer angles at positions in the track. For this approach since the dataset size would be small network would have to be regularized robustly to prevent overfitting.
-* End to end training for behaviour cloning is presumably a weak approach, since the behaviour learned do not seem to be easily tranferable as seen from mountain track. Reinforcement learning might be a better suited to tackle this problem.
+* Instead if mimicking the driving behavior of the dataset curator, once can manually create a very small dataset with perfect steer angles at positions in the track. For this approach since the dataset size would be small. Hence the network would have to be regularized robustly to prevent overfitting.
+* End to end training for behavior cloning is presumably a weak approach, since the behavior learned do not seem to be easily transferable as seen from mountain track. Reinforcement learning might be a better suited to tackle this problem.
