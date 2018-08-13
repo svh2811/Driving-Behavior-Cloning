@@ -3,6 +3,8 @@ import base64
 from datetime import datetime
 import os
 import shutil
+import tensorflow as tf
+import atexit
 
 import numpy as np
 import socketio
@@ -20,6 +22,11 @@ sio = socketio.Server()
 app = Flask(__name__)
 model = None
 prev_image_array = None
+
+
+def invalid_speed_exit_message(speed):
+    print("Invalid speed value {%d}, speed value must be between 1 and 30"
+                .format(speed))
 
 
 class SimplePIController:
@@ -44,8 +51,6 @@ class SimplePIController:
 
 
 controller = SimplePIController(0.1, 0.002)
-set_speed = 30
-controller.set_desired(set_speed)
 
 
 @sio.on('telemetry')
@@ -69,9 +74,9 @@ def telemetry(sid, data):
         send_control(steering_angle, throttle)
 
         # save frame
-        if args.image_folder != '':
+        if args.video_frames_directory != '':
             timestamp = datetime.utcnow().strftime('%Y_%m_%d_%H_%M_%S_%f')[:-3]
-            image_filename = os.path.join(args.image_folder, timestamp)
+            image_filename = os.path.join(args.video_frames_directory, timestamp)
             image.save('{}.jpg'.format(image_filename))
     else:
         # NOTE: DON'T EDIT THIS.
@@ -97,18 +102,30 @@ def send_control(steering_angle, throttle):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Remote Driving')
     parser.add_argument(
-        'model',
+        '-s', '--speed',
+        type=int,
+        default=15,
+        help='Speed, should be a whole number between 1 and 30 inclusive.'
+    )
+    parser.add_argument(
+        '-m', '--model',
         type=str,
+        default="./model/checkpoint/model_chkpt.h5",
         help='Path to model h5 file. Model should be on the same path.'
     )
     parser.add_argument(
-        'image_folder',
+        '-vfd', '--video_frames_directory',
         type=str,
         nargs='?',
         default='',
         help='Path to image folder. This is where the images from the run will be saved.'
     )
     args = parser.parse_args()
+
+    if args.speed < 1 or args.speed > 30:
+        atexit.register(invalid_speed_exit_message, speed=args.speed)
+
+    controller.set_desired(args.speed)
 
     # check that model Keras version is same as local Keras version
     f = h5py.File(args.model, mode='r')
@@ -119,15 +136,19 @@ if __name__ == '__main__':
         print('You are using Keras version ', keras_version,
               ', but the model was built using ', model_version)
 
-    model = load_model(args.model)
+    # custom_objects is required since any tensorflow function included in
+    # model architecture will need tf handle for reference
+    # this is a work around for presumably a limitation of keras
+    # for this version
+    model = load_model(args.model, custom_objects={"tf": tf})
 
-    if args.image_folder != '':
-        print("Creating image folder at {}".format(args.image_folder))
-        if not os.path.exists(args.image_folder):
-            os.makedirs(args.image_folder)
+    if args.video_frames_directory != '':
+        print("Creating image folder at {}".format(args.video_frames_directory))
+        if not os.path.exists(args.video_frames_directory):
+            os.makedirs(args.video_frames_directory)
         else:
-            shutil.rmtree(args.image_folder)
-            os.makedirs(args.image_folder)
+            shutil.rmtree(args.video_frames_directory)
+            os.makedirs(args.video_frames_directory)
         print("RECORDING THIS RUN ...")
     else:
         print("NOT RECORDING THIS RUN ...")
