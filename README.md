@@ -101,7 +101,8 @@ To train the network a batch-size of 32 samples was used with convolution dropou
 * First experiment was using LeNet model and default-training-dataset, the model frequently used to get off-track and the car never drove past the bridge over lake.
 * To improve the performance, a higher capacity network was used (this network had 4M trainable parameters which is significantly higher than the final selected model), this model drove well for most of track except for the below two tricky turns.
 * Instead of altering model architecture, custom dataset was collected as mentioned in point 1.1 (of Creation of the Training Set & Training Process). The model drove around the track ideally with smooth turns around the above mentioned two difficult tracks, even at top speed of 30 mph. However, for track-2 the model could not get past the first turn.
-* Next, additional track-2 related data were added as mentioned in point 1.2 (of Creation of the Training Set & Training Process)
+* Next, additional track-2 related data were added as mentioned in point 1.2 (of Creation of the Training Set & Training Process) the model trained drove properly around track-1 however the model used to drive off-track frequently for track-02. This was perplexing since the mean squared error loss for both training and validation dataset were lower than the previous iteration.
+* To mitigate this issue a compartively lower capacity model (one mentioned in this report above) was selected.
 
 ### Simulation
 
