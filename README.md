@@ -65,14 +65,13 @@ file utils.py method get_model(...)
 | Dense              | (?, 50)          | (?, 10)         | 510 |
 | Dense              | (?, 10)          | (?, 1)          | 11 |
 
-Total params: 253,563
+*Total params: 253,563*
 
-Trainable params: 252,891
+*Trainable params: 252,891*
 
-Non-trainable params: 672
+*Non-trainable params: 672*
 
-
-![alt text][image1]
+![tensorboard visualization of best performing model][./images/model.png]
 
 #### Avoiding overfitting
 To avoid overfitting training data was augmented by flipping every image in the dataset, batch-normalize convolution layer followed by dropout. Also, first fully-connected layer was regularized using dropuout layer and the subsequent fully connected layer was regularized using l2-regularizer.   
