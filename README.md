@@ -102,7 +102,16 @@ To train the network a batch-size of 32 samples was used with convolution dropou
 * To improve the performance, a higher capacity network was used (this network had 4M trainable parameters which is significantly higher than the final selected model), this model drove well for most of track except for the below two tricky turns.
 * Instead of altering model architecture, custom dataset was collected as mentioned in point 1.1 (of Creation of the Training Set & Training Process). The model drove around the track ideally with smooth turns around the above mentioned two difficult tracks, even at top speed of 30 mph. However, for track-2 the model could not get past the first turn.
 * Next, additional track-2 related data were added as mentioned in point 1.2 (of Creation of the Training Set & Training Process) the model trained drove properly around track-1 however the model used to drive off-track frequently for track-02. This was perplexing since the mean squared error loss for both training and validation dataset were lower than the previous iteration.
-* To mitigate this issue a compartively lower capacity model (one mentioned in this report above) was selected.
+* To mitigate this issue a compartively lower capacity model (one mentioned in this report above) was selected. The performance of this model was good for both tracks even though the validation loss and training loss were higher.
+ * Even at top-speed 30mph the model drove the car the around track-01 adequately. Although the deeper model that was previously selected drove the car perfectly at top speed. But this can be explained since the previous model was trained exclusively with track-01 data and the current model was trained with dataset with only 15% track-01 image frames. Hence the behaviour learned has influence from track-02 frames.  
+ * At top speed 30, the model required manual interventions at certain turns to complete the track althought it was able to drive extremely challenging streches of track successfully at top speed. Even collecting data (while maintaining top speed) was arduous and at several sharp turn brakes were applied to prevent the car from going offtrack.
+ * Since the model drives around track-02 completly autonoumsly till speed 25, a better quality training dataset would further improve the performance of the model for track-02.
+* Finally, the same model was used to drive around mountain track (present in older iteration of simulator). 
 
-### Simulation
+#### Plots
+
+![train loss v/s. validation loss](/plots/train_loss-vs-val_loss.png)
+
+### Simulation Results
+
 
