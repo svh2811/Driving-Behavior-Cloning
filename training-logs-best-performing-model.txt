@@ -1,0 +1,154 @@
+svh@svh-inspiron-15-7000:~/Driving-Behavior-Cloning$ python3 behavior_cloning.py
+Using TensorFlow backend.
+
+
+Number of samples :  81432
+Number of training samples   :  61074
+Number of validation samples :  20358
+After augmentation number of training samples   :  122148
+After augmentation number of validation samples :  40716
+
+
+2018-08-12 23:53:49.269870: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:897] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2018-08-12 23:53:49.270279: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1405] Found device 0 with properties:
+name: GeForce GTX 1050 Ti major: 6 minor: 1 memoryClockRate(GHz): 1.62
+pciBusID: 0000:01:00.0
+totalMemory: 3.95GiB freeMemory: 3.60GiB
+
+
+2018-08-12 23:53:49.270312: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1484] Adding visible gpu devices: 0
+2018-08-12 23:53:49.464838: I tensorflow/core/common_runtime/gpu/gpu_device.cc:965] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-08-12 23:53:49.464890: I tensorflow/core/common_runtime/gpu/gpu_device.cc:971]      0
+2018-08-12 23:53:49.464897: I tensorflow/core/common_runtime/gpu/gpu_device.cc:984] 0:   N
+2018-08-12 23:53:49.465105: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1097] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 3325 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1050 Ti, pci bus id: 0000:01:00.0, compute capability: 6.1)
+
+
+Epoch 1/30
+3818/3818 [==============================] - 343s 90ms/step - loss: 0.1733 - val_loss: 0.1535
+Epoch 2/30
+3818/3818 [==============================] - 341s 89ms/step - loss: 0.1584 - val_loss: 0.1481
+Epoch 3/30
+3818/3818 [==============================] - 343s 90ms/step - loss: 0.1530 - val_loss: 0.1434
+Epoch 4/30
+3818/3818 [==============================] - 344s 90ms/step - loss: 0.1489 - val_loss: 0.1404
+Epoch 5/30
+3818/3818 [==============================] - 344s 90ms/step - loss: 0.1452 - val_loss: 0.1362
+Epoch 6/30
+3818/3818 [==============================] - 344s 90ms/step - loss: 0.1417 - val_loss: 0.1354
+Epoch 7/30
+3818/3818 [==============================] - 344s 90ms/step - loss: 0.1389 - val_loss: 0.1344
+Epoch 8/30
+3818/3818 [==============================] - 328s 86ms/step - loss: 0.1359 - val_loss: 0.1314
+Epoch 9/30
+3818/3818 [==============================] - 250s 65ms/step - loss: 0.1330 - val_loss: 0.1349
+
+Epoch 00009: ReduceLROnPlateau reducing learning rate to 0.00030000000260770325.
+Epoch 10/30
+3818/3818 [==============================] - 344s 90ms/step - loss: 0.1260 - val_loss: 0.1259
+Epoch 11/30
+3818/3818 [==============================] - 343s 90ms/step - loss: 0.1237 - val_loss: 0.1251
+Epoch 12/30
+3818/3818 [==============================] - 343s 90ms/step - loss: 0.1221 - val_loss: 0.1247
+Epoch 13/30
+3818/3818 [==============================] - 344s 90ms/step - loss: 0.1216 - val_loss: 0.1242
+
+Epoch 00013: ReduceLROnPlateau reducing learning rate to 3.000000142492354e-05.
+Epoch 14/30
+3818/3818 [==============================] - 343s 90ms/step - loss: 0.1203 - val_loss: 0.1233
+Epoch 15/30
+3818/3818 [==============================] - 344s 90ms/step - loss: 0.1202 - val_loss: 0.1232
+Epoch 16/30
+3818/3818 [==============================] - 344s 90ms/step - loss: 0.1198 - val_loss: 0.1231
+
+Epoch 00016: ReduceLROnPlateau reducing learning rate to 3.000000106112566e-06.
+Epoch 17/30
+3818/3818 [==============================] - 343s 90ms/step - loss: 0.1201 - val_loss: 0.1230
+Epoch 18/30
+3818/3818 [==============================] - 343s 90ms/step - loss: 0.1197 - val_loss: 0.1231
+Epoch 19/30
+3818/3818 [==============================] - 344s 90ms/step - loss: 0.1199 - val_loss: 0.1231
+
+Epoch 00019: ReduceLROnPlateau reducing learning rate to 3.000000106112566e-07.
+Epoch 00019: early stopping
+
+
+
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+cropping2d_1 (Cropping2D)    (None, 90, 320, 3)        0
+_________________________________________________________________
+lambda_1 (Lambda)            (None, 66, 200, 3)        0
+_________________________________________________________________
+lambda_2 (Lambda)            (None, 66, 200, 3)        0
+_________________________________________________________________
+conv2d_1 (Conv2D)            (None, 31, 98, 24)        1824
+_________________________________________________________________
+batch_normalization_1 (Batch (None, 31, 98, 24)        96
+_________________________________________________________________
+activation_1 (Activation)    (None, 31, 98, 24)        0
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 31, 98, 24)        0
+_________________________________________________________________
+conv2d_2 (Conv2D)            (None, 14, 47, 36)        21636
+_________________________________________________________________
+batch_normalization_2 (Batch (None, 14, 47, 36)        144
+_________________________________________________________________
+activation_2 (Activation)    (None, 14, 47, 36)        0
+_________________________________________________________________
+dropout_2 (Dropout)          (None, 14, 47, 36)        0
+_________________________________________________________________
+conv2d_3 (Conv2D)            (None, 5, 22, 48)         43248
+_________________________________________________________________
+batch_normalization_3 (Batch (None, 5, 22, 48)         192
+_________________________________________________________________
+activation_3 (Activation)    (None, 5, 22, 48)         0
+_________________________________________________________________
+dropout_3 (Dropout)          (None, 5, 22, 48)         0
+_________________________________________________________________
+conv2d_4 (Conv2D)            (None, 3, 20, 64)         27712
+_________________________________________________________________
+batch_normalization_4 (Batch (None, 3, 20, 64)         256
+_________________________________________________________________
+activation_4 (Activation)    (None, 3, 20, 64)         0
+_________________________________________________________________
+dropout_4 (Dropout)          (None, 3, 20, 64)         0
+_________________________________________________________________
+conv2d_5 (Conv2D)            (None, 1, 18, 64)         36928
+_________________________________________________________________
+batch_normalization_5 (Batch (None, 1, 18, 64)         256
+_________________________________________________________________
+activation_5 (Activation)    (None, 1, 18, 64)         0
+_________________________________________________________________
+dropout_5 (Dropout)          (None, 1, 18, 64)         0
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 1152)              0
+_________________________________________________________________
+dense_1 (Dense)              (None, 100)               115300
+_________________________________________________________________
+batch_normalization_6 (Batch (None, 100)               400
+_________________________________________________________________
+activation_6 (Activation)    (None, 100)               0
+_________________________________________________________________
+dropout_6 (Dropout)          (None, 100)               0
+_________________________________________________________________
+dense_2 (Dense)              (None, 50)                5050
+_________________________________________________________________
+dense_3 (Dense)              (None, 10)                510
+_________________________________________________________________
+dense_4 (Dense)              (None, 1)                 11
+=================================================================
+Total params: 253,563
+Trainable params: 252,891
+Non-trainable params: 672
+_________________________________________________________________
+
+
+
+Model saved to disk
+Saved model weights to disk
+Training history saved
+
+
+
+svh@svh-inspiron-15-7000:~/Driving-Behavior-Cloning$
