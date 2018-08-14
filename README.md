@@ -18,7 +18,7 @@ Neural Network that mimics the driving behavior
 
 ### Driving the car autonomously 
 driving-simulator-files, `drive.py` script and the saved model file is required to run the car autonomously in the simulator 
-driving-simulator-files would be downloaded if download_resources.sh script is run.
+driving-simulator-files would be downloaded if `download_resources.sh` script is run.
 ```sh
 ./linux_sim/linux_sim.x86_64
 ```
