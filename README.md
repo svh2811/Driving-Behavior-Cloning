@@ -113,7 +113,7 @@ To train the network a batch-size of 32 samples was used with convolution dropou
 * The first experiment was using LeNet model and default-training-dataset, the model frequently used to get off-track and the car never drove past the bridge over the lake.
 * To improve the performance, a higher capacity network was used (this network had 4M trainable parameters which is significantly higher than the final selected model), this model drove well for most of the track except for the below two tricky turns.
 
-<div style="padding-left: 40px">
+<div style="padding-left: 140px">
   <img src="images/sand-lane-left-turn.png" width="240"/>
   <img src="images/lake-right-turn.png" width="240"/>
 </div>
